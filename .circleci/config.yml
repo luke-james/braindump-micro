@@ -24,8 +24,8 @@ jobs:
       - checkout
 
       - run: Set Version
-        command: |
-          echo 'export VERSION=$(mvn help:evaluate - Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
+          command: |
+            echo 'export VERSION=$(mvn help:evaluate - Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
 
       # Download and cache dependencies
       - restore_cache:
