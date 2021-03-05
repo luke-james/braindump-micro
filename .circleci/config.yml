@@ -70,7 +70,7 @@ jobs:
 
       - slack/notify:
           event: fail
-          mentions: @LukeJames
+          mentions: '@LukeJames'
           template: basic_fail_1
 
       # Notify Slack if the build passes...
