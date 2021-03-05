@@ -6,9 +6,8 @@ version: 2
 jobs:
   build:
     machine:
-
       # Specify the version you desire here
-      - image: ubuntu-2004:202008-01
+      image: ubuntu-2004:202008-01
 
     resource_class: medium
     working_directory: ~/repo
