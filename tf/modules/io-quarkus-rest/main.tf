@@ -41,17 +41,6 @@ module "quarkus_security_group" {
   service_name = var.service_name
   description = "A security group to protect our Quarkus (${ var.service_name }) service."
 
-  ingress_cidr_block = [""]
-  egress_cidr_block = [""]
-}
-
-variable "ingress_cidr_block" {
-  type = list(string)
-  description = "Allowed incoming address range (IPv4)."
-}
-
-variable "ingress_from_port" {
-  type = number
-  default = 80
-  description = "Allowed source port for incoming traffic data."
+  ingress_cidr_block = ["10.0.2.0/24"]
+  egress_cidr_block = ["10.0.2.0/24"]
 }

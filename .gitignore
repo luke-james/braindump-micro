@@ -43,3 +43,4 @@ gradle-app.setting
 
 # Terraform
 .terraform
+*.tfstate.*
