@@ -1,10 +1,14 @@
 resource "aws_elb" "load-balancer" {
 
-    name = "${ var.service }-elb"
+    name = "${ var.service_name }-elb"
+    availability_zones = var.availability_zones
+
+    security_groups = var.security_groups
+    subnets = var.security_group_subnets
 
     access_logs {
         bucket = "${ var.id }"
-        bucket_prefix = "${ var.service }-"
+        bucket_prefix = "${ var.service_name }-"
     }
 
     # Listen to incoming traffic on port 80 & forward to our target group on a given port.
@@ -24,6 +28,6 @@ resource "aws_elb" "load-balancer" {
     }
 
     tags = {
-        Name = "${ var.id }-${ var.service }"
+        Name = "${ var.id }-${ var.service_name }"
     }
 }

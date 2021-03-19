@@ -1,6 +1,24 @@
-variable "service" {
+variable "service_name" {
     type = string
     description = "The service that the load balance is a part of (e.g. io-quarkus REST API)"
+}
+
+variable "availability_zones" {
+    type = list(string)
+    description = "Where we want to make our load balancer available."
+    default = ["eu-west-1"]
+}
+
+variable "security_groups" {
+    type = list(string)
+    description = "A list of security groups for our load balancer."
+    default = []
+}
+
+variable "security_group_subnets" {
+    type = list(string)
+    description = "A list of subnets for our ELB (required if using a VPC)."
+    default = []
 }
 
 variable "id" {

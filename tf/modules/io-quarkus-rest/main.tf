@@ -52,7 +52,14 @@ module "quarkus_load_balancers" {
 
   service_name = var.service_name
   id = "web"
+  
+  availability_zones = ["eu-west-1"]
+
+  security_groups = ["quarkus_security_group"]
+  security_group_subnets = ["public_subnet"]
 
   instance_port = 8080
   lb_port = 80
+
+  depends_on = ["quarkus_security_group", "public_subnet"]
 }
