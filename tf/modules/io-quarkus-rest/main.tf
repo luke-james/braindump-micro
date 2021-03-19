@@ -44,3 +44,15 @@ module "quarkus_security_group" {
   ingress_cidr_block = ["10.0.2.0/24"]
   egress_cidr_block = ["10.0.2.0/24"]
 }
+
+# Create load balancers to handle traffic to our Quarkus service.
+module "quarkus_load_balancers" {
+  
+  source = "./modules/aws-elb"
+
+  service_name = var.service_name
+  id = "web"
+
+  instance_port = 8080
+  lb_port = 80
+}
