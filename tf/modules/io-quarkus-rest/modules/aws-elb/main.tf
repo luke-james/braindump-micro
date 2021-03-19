@@ -1,7 +1,6 @@
 resource "aws_elb" "load-balancer" {
 
     name = "${ var.service_name }-elb"
-    availability_zones = var.availability_zones
 
     security_groups = var.security_groups
     subnets = var.security_group_subnets

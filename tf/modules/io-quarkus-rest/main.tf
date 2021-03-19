@@ -45,6 +45,15 @@ module "quarkus_security_group" {
   egress_cidr_block = ["10.0.2.0/24"]
 }
 
+  # Create an internet gateway, to allow clients to communicate with our infrastructure.
+module "vpc_internet_gateway" {
+
+  source = "./modules/aws-vpc-internet-gateway"
+  vpc_id = aws_vpc.io-quarkus-rest.id
+  service_name = "${ var.service_name }"
+
+}
+
 # Create load balancers to handle traffic to our Quarkus service.
 module "quarkus_load_balancers" {
   
@@ -52,14 +61,11 @@ module "quarkus_load_balancers" {
 
   service_name = var.service_name
   id = "web"
-  
-  availability_zones = ["eu-west-1"]
 
-  security_groups = ["quarkus_security_group"]
-  security_group_subnets = ["public_subnet"]
+  security_groups = [module.quarkus_security_group.security_group_id]
+  security_group_subnets = [module.public_subnet.subnet_id]
 
   instance_port = 8080
   lb_port = 80
 
-  depends_on = ["quarkus_security_group", "public_subnet"]
 }

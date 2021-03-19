@@ -12,3 +12,9 @@ variable "cidr_block" {
   type = string
   description = "The CIDR range we want to give to our new subnet within the target VPC."
 }
+
+variable "has_internet_gateway" {
+  type = bool
+  description = "True if we want to create an internet gateway.  False if not."
+  default = false
+}

@@ -2,7 +2,6 @@
 # This module allows us to reuse the creation of AWS Subnets
 #
 
-# Create a new subnet.
 resource "aws_subnet" "new_subnet" {
 
   # This module is designed to be reused, so we will pass in a target VPC, which has a defined CIDR range for IPv4 addresses.
