@@ -7,23 +7,34 @@
 # --> 1x Public Subnet (/w elastic IP)
 # --> 1x Private Subnet (for our Fargate service)
 
-# Create a private subnet for our entire Quarkus backend.
-resource "aws_vpc" "io-quarkus-rest" {
+module "io-quarkus-rest-vpc" {
+
+  ## This module will create a basic VPC to contain our backend services.
+
+
+  source = "./modules/aws-vpc"
+
+  service_name = var.service_name
+  description = "web"
+
   cidr_block = "10.0.0.0/16"
+  dns_support = true
+  dns_hostnames = true
+
 }
 
 # Create a public subnet for our ELB/Load Balancers.
-module "public_subnet" {
+module "public_subnet_one" {
 
   source = "./modules/aws-subnet"
 
-  vpc_id = aws_vpc.io-quarkus-rest.id
+  vpc_id = module.io-quarkus-rest-vpc.id
   service_name = var.service_name
   cidr_block = "10.0.1.0/24"
 }
 
 # Create a private subnet for our Fargate service.
-module "private_subnet" {
+module "private_subnet_one" {
 
   source = "./modules/aws-subnet"
 
@@ -62,10 +73,19 @@ module "quarkus_load_balancers" {
   service_name = var.service_name
   id = "web"
 
-  security_groups = [module.quarkus_security_group.security_group_id]
-  security_group_subnets = [module.public_subnet.subnet_id]
+  security_groups = [
+    module.quarkus_security_group.security_group_id
+    ]
+  
+  security_group_subnets = [
+    module.public_subnet.subnet_id
+    ]
 
   instance_port = 8080
   lb_port = 80
+
+  depends_on = [
+    module.vpc_internet_gateway
+    ]
 
 }

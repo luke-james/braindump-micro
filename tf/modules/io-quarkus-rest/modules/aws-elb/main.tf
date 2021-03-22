@@ -5,10 +5,10 @@ resource "aws_elb" "load-balancer" {
     security_groups = var.security_groups
     subnets = var.security_group_subnets
 
-    access_logs {
-        bucket = "${ var.id }"
-        bucket_prefix = "${ var.service_name }-"
-    }
+    #access_logs {
+    #    bucket = "${ var.id }-elb"
+    #    bucket_prefix = "${ var.service_name }-"
+    #}
 
     # Listen to incoming traffic on port 80 & forward to our target group on a given port.
     listener {
