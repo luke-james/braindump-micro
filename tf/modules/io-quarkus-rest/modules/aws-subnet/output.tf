@@ -1,3 +1,3 @@
-output "subnet_id" {
-    value = aws_subnet.new_subnet.id
+output "created_subnets" {
+    value = aws_subnet.create_subnets.*
 }

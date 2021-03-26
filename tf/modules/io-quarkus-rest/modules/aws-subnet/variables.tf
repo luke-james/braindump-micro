@@ -1,20 +1,22 @@
-variable "vpc_id" {
-  type = string
-  description = "The target VPC for this subnet to be created in."
-}
+variable "subnets" {
+  description = "Map of all subnets to be created."
+  type = map
+  default = {
 
-variable "service_name" {
-  type = string
-  description = "The pretty/human-readable name for the service this subnet is part of. This will be set in the resource tags."
-}
+    quarkus-app = {
 
-variable "cidr_block" {
-  type = string
-  description = "The CIDR range we want to give to our new subnet within the target VPC."
-}
+      service_name = "quarkus-app",
+      environment = "dev"
 
-variable "has_internet_gateway" {
-  type = bool
-  description = "True if we want to create an internet gateway.  False if not."
-  default = false
+      target_vpc = {},
+
+      # Subnet name & cidr_block value pair.
+      blocks = {
+          "publicOne" = "10.0.1.0/24",
+          "publicTwo" = "10.0.2.0/24",
+          "privateOne" = "10.0.3.0/24",
+          "privateTwo" = "10.0.4.0/24",
+      }
+    }
+  }
 }

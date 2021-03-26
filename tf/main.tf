@@ -4,7 +4,7 @@ terraform {
 
   backend "s3" {
 
-    bucket = "terraform-up-and-running-state-apa2tjge"
+    bucket = "terraform-up-and-running-state-crw59utr"
     key = "s3/tf.state" ## --> terraform.tfstate file is written to this key e.g. s3:::braindump-tfstate-bucket/tf.key
     region = "eu-west-1"
 

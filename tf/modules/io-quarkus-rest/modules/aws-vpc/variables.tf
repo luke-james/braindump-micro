@@ -5,7 +5,6 @@ variable "service_name" {
 
 variable "description" {
     type = string
-    le
     description = "A short description/id for the service to be used as part of the tags."
 }
 
@@ -14,7 +13,7 @@ variable "cidr_block" {
     description = "CIDR block of IPv4 addresses to allocate for this VPC (e.g. 10.0.0.0/16)."
 } 
 
-variable "instance_tennancy" {
+variable "instance_tenancy" {
     type = string
     default = "default"
     description = "Default == Shared Tenancy (Dedicated or Host are other options and cost at least $2 an hour)."
