@@ -2,14 +2,12 @@ resource "aws_ecs_service" "new_service" {
 
   name = var.service_name
 
-  cluster = aws_ecs_cluster.quarkus_cluster.id
-  task_definition = aws_ecs_task_definition.quarkus_task_def.arn
+  cluster = var.cluster.arn
+  task_definition = var.task_def.arn
 
-  desired_count = 3
+  desired_count = var.desired_count
 
-  iam_role = aws_iam_role.quarkus_iam.arn
-
-  depends_on = [aws_iam_role_policy.quarkus_iam_policy]
+  iam_role = var.iam_role.arn
 
   ordered_placement_strategy {
     type = "binpack"
@@ -17,13 +15,13 @@ resource "aws_ecs_service" "new_service" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.quarkus_lb.arn
-    container_name = "quarkus"
-    container_port = 8080
+    target_group_arn = var.load_balancer["arn"]
+    container_name = var.service_name
+    container_port = var.load_balancer["port"]
   }
 
   placement_constraints {
     type = "memberOf"
-    expression = "attributes:ecs.availability-zone in [eu-west-1]"
+    expression = "attributes:ecs.availability-zone in ${ var.geo_locations }"
   }
 }
