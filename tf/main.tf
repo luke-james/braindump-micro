@@ -4,7 +4,7 @@ terraform {
 
   backend "s3" {
 
-    bucket = "terraform-up-and-running-state-crw59utr"
+    bucket = "terraform-up-and-running-state-tjdlt03g"
     key = "s3/tf.state" ## --> terraform.tfstate file is written to this key e.g. s3:::braindump-tfstate-bucket/tf.key
     region = "eu-west-1"
 
@@ -30,6 +30,9 @@ provider "aws" {
 
 # Create our Quarkus REST Service
 module "io-quarkus-brain-dump-micro" {
+  
   source       = "./modules/io-quarkus-rest"
-  service_name = "io-quarkus-brain-dump-micro"
+  
+  service = "braindump-quarkus"
+  env = "dev"
 }

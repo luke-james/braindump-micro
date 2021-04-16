@@ -1,106 +1,34 @@
-## io-quarkus-rest
-# This module will define the systems required to support running our Quarkus REST API
-# using Amazon Fargate, EKS & ECS.
 
-# We will need:
-# --> AWS VPC to group our compute resources.
-# --> 1x Public Subnet (/w elastic IP)
-# --> 1x Private Subnet (for our Fargate service)
+module "quarkus_infrastructure" {
 
-module "io-quarkus-rest-vpc" {
+    source = "./modules/backend-access-security-networking"
 
-  ## We want to wrap our backend services in a VPC.
+    service = var.service
+    env = var.env
 
-  source = "./modules/aws-vpc"
+    vpc_cidr_block = "10.0.0.0/16"
 
-  service_name = var.service_name
-  description = "web"
-
-  cidr_block = "10.0.0.0/16"
-  dns_support = true
-  dns_hostnames = true
-
+    public_subnets = "10.0.1.0/24"
+    private_subnets = "10.0.3.0/24"
 }
 
-module "app_subnets" {
+module "container_compute_resources" {
 
-  # Create a set of subnets for our backend services.
+  ## This module will create a set of ECS resources to handle our Quarkus application.
 
-  source = "./modules/aws-subnet"
+  source = "./modules/containers"
+  
+  service = var.service
+  env = var.env
+  
+  load_balancer_arn = module.quarkus_infrastructure.load_balancer_target_group_arn
+  load_balancer_port = module.quarkus_infrastructure.load_balancer_port
 
-  subnets = {
-    quarkus-dev = {
-      
-      service_name = var.service_name,
-      environment = "dev",
-      
-      target_vpc = module.io-quarkus-rest-vpc.created_vpc,
-      blocks = {
-        "publicOne" = "10.0.1.0/24",
-        "publicTwo" = "10.0.2.0/24", 
-        "privateOne" = "10.0.3.0/24",
-        "privateTwo" = "10.0.4.0/24" 
-      }
-    }
-  }
+  geo_locations = [
+    "eu-west-1"
+  ]
 
   depends_on = [
-      module.io-quarkus-rest-vpc
-    ]
-}
-
-module "quarkus_security_group" {
-
-  # Create a security group that allows our load balancers to talk
-  # to our Quarkus backend application.
-
-  source = "./modules/aws-security-group"
-
-  vpc_id = module.io-quarkus-rest-vpc.created_vpc.id
-  service_name = var.service_name
-  description = "A security group to protect our Quarkus (${ var.service_name }) service."
-
-  ingress_cidr_block = ["10.0.2.0/24"]
-  egress_cidr_block = ["10.0.2.0/24"]
-}
-
-module "vpc_internet_gateway" {
-
-  # Create an internet gatway to allow,
-  # web clients to access our application.
-
-  source = "./modules/aws-vpc/modules/aws-vpc-internet-gateway"
-  vpc_id = module.io-quarkus-rest-vpc.created_vpc.id
-  service_name = "${ var.service_name }"
-
-}
-
-module "quarkus_load_balancers" {
-
-  # Use this module to create a public facing load balancer for our Quarkus service.
-  # This load balancer will eventually feed traffic into our Quarkus/ECS container service, 
-  # running on port 8080.
-  
-  source = "./modules/aws-elb"
-
-  service_name = var.service_name
-  id = "web"
-
-  security_groups = [
-    module.quarkus_security_group.security_group_id
-    ]
-  
-  security_group_subnets = [
-    module.app_subnets.created_subnets[0]["quarkus-dev.publicOne"].id,
-    module.app_subnets.created_subnets[0]["quarkus-dev.publicTwo"].id
-    ]
-
-  instance_port = 8080
-  lb_port = 80
-
-  depends_on = [
-    module.vpc_internet_gateway,
-    module.app_subnets
-    ]
-
+    module.quarkus_infrastructure
+  ]
 }
